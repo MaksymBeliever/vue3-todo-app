@@ -5,12 +5,24 @@ export default {
   data() {
     return {
       todos,
+      title: '',
     }
   },
   computed: {
     activeTodos() {
       return this.todos.filter(todo => !todo.completed);
     },
+  },
+  methods: {
+    handleSubmit() {
+      this.todos.push({
+        id: Date.now(),
+        title: this.title,
+        completed: false,
+      });
+
+      this.title = '';
+    }
   }
 }
 </script>
@@ -23,11 +35,12 @@ export default {
       <header class="todoapp__header">
         <button class="todoapp__toggle-all" :class="{ active: activeTodos.length === 0 }"></button>
 
-        <form>
+        <form @submit.prevent="handleSubmit">
           <input
               type="text"
               class="todoapp__new-todo"
               placeholder="What needs to be done?"
+              v-model="title"
           />
         </form>
       </header>
