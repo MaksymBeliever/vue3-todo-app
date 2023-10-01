@@ -6,6 +6,11 @@ export default {
     return {
       todos,
     }
+  },
+  computed: {
+    activeTodos() {
+      return this.todos.filter(todo => !todo.completed);
+    },
   }
 }
 </script>
@@ -16,7 +21,7 @@ export default {
 
     <div class="todoapp__content">
       <header class="todoapp__header">
-        <button class="todoapp__toggle-all active"></button>
+        <button class="todoapp__toggle-all" :class="{ active: activeTodos.length === 0 }"></button>
 
         <form>
           <input
@@ -65,7 +70,7 @@ export default {
 
       <footer class="todoapp__footer">
         <span class="todo-count">
-          3 items left
+          {{ activeTodos.length }} items left
         </span>
 
         <nav class="filter">
@@ -91,7 +96,7 @@ export default {
           </a>
         </nav>
 
-        <button class="todoapp__clear-completed">
+        <button v-if="activeTodos.length > 0" class="todoapp__clear-completed">
           Clear completed
         </button>
       </footer>
