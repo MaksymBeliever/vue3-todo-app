@@ -3,6 +3,12 @@ import todos from './data/todos';
 
 export default {
   data() {
+    let todos = [];
+
+    try {
+      todos = JSON.parse(localStorage.getItem('todos') || '[]');
+    } catch (error) {}
+
     return {
       todos,
       title: '',
@@ -12,6 +18,14 @@ export default {
     activeTodos() {
       return this.todos.filter(todo => !todo.completed);
     },
+  },
+  watch: {
+    todos: {
+      deep: true,
+      handler() {
+        localStorage.setItem('todos', JSON.stringify(this.todos));
+      }
+    }
   },
   methods: {
     handleSubmit() {
