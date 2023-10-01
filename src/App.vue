@@ -1,18 +1,24 @@
 <script>
-import todos from './data/todos';
+import StatusFilter from './components/StatusFilter.vue';
 
 export default {
+  components: {
+    StatusFilter,
+  },
   data() {
     let todos = [];
 
     try {
-      todos = JSON.parse(localStorage.getItem('todos') || '[]');
-    } catch (error) {}
+      todos = JSON.parse(
+          localStorage.getItem('todos') || '[]'
+      );
+    } catch (e) {}
 
     return {
       todos,
       title: '',
-    }
+      status: 'all',
+    };
   },
   computed: {
     activeTodos() {
@@ -24,8 +30,8 @@ export default {
       deep: true,
       handler() {
         localStorage.setItem('todos', JSON.stringify(this.todos));
-      }
-    }
+      },
+    },
   },
   methods: {
     handleSubmit() {
@@ -36,9 +42,9 @@ export default {
       });
 
       this.title = '';
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <template>
@@ -47,7 +53,10 @@ export default {
 
     <div class="todoapp__content">
       <header class="todoapp__header">
-        <button class="todoapp__toggle-all" :class="{ active: activeTodos.length === 0 }"></button>
+        <button
+            class="todoapp__toggle-all"
+            :class="{ active: activeTodos.length === 0 }"
+        ></button>
 
         <form @submit.prevent="handleSubmit">
           <input
@@ -61,7 +70,7 @@ export default {
 
       <section class="todoapp__main">
         <div
-            v-for="(todo, index) of todos"
+            v-for="todo, index of todos"
             :key="todo.id"
             class="todo"
             :class="{ completed: todo.completed }"
@@ -85,7 +94,13 @@ export default {
 
           <template v-else>
             <span class="todo__title">{{ todo.title }}</span>
-            <button @click="todos.splice(index, 1)" class="todo__remove">x</button>
+
+            <button
+                class="todo__remove"
+                @click="todos.splice(index, 1)"
+            >
+              x
+            </button>
           </template>
 
           <div class="modal overlay" :class="{ 'is-active': false }">
@@ -96,32 +111,11 @@ export default {
       </section>
 
       <footer class="todoapp__footer">
-        <span class="todo-count">
+        <span class="todoapp__active-count">
           {{ activeTodos.length }} items left
         </span>
 
-        <nav class="filter">
-          <a
-              href="#/"
-              class="filter__link selected"
-          >
-            All
-          </a>
-
-          <a
-              href="#/active"
-              class="filter__link"
-          >
-            Active
-          </a>
-
-          <a
-              href="#/completed"
-              class="filter__link"
-          >
-            Completed
-          </a>
-        </nav>
+        <StatusFilter v-model="status" />
 
         <button v-if="activeTodos.length > 0" class="todoapp__clear-completed">
           Clear completed
@@ -141,3 +135,7 @@ export default {
     </article>
   </div>
 </template>
+
+<style>
+
+</style>
