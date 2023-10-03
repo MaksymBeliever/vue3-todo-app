@@ -2,9 +2,11 @@
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from '@/components/TodoItem.vue';
 import { createTodo, getTodos, updateTodo, deleteTodo } from '@/data/todos';
+import Message from '@/components/Message.vue';
 
 export default {
   components: {
+    Message,
     StatusFilter,
     TodoItem
   },
@@ -13,6 +15,7 @@ export default {
       todos: [],
       title: '',
       status: 'all',
+      errorMessage: '',
     };
   },
   computed: {
@@ -45,8 +48,9 @@ export default {
   // },
   mounted() {
     getTodos()
-        .then(({ data }) => {
-          this.todos = data;
+        .then(({ data }) => this.todos = data)
+        .catch(() => {
+          this.errorMessage = 'Unable to load todos';
         })
   },
   methods: {
@@ -128,16 +132,19 @@ export default {
       </footer>
     </div>
 
-    <article class="message is-danger message--hidden">
-      <div class="message-header">
-        <p>Error</p>
-        <button class="delete"></button>
-      </div>
+    <Message
+        class="is-danger"
+        :active="errorMessage !== ''"
+        @hide="errorMessage = ''"
+    >
+      <template #default>
+        <p>{{ errorMessage }}</p>
+      </template>
 
-      <div class="message-body">
-        Unable to add a Todo
-      </div>
-    </article>
+      <template #header>
+        <p>Server Error</p>
+      </template>
+    </Message>
   </div>
 </template>
 
